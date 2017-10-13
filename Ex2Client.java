@@ -5,10 +5,6 @@ import java.util.zip.CRC32;
 
 public class Ex2Client {
 
-	public Ex2Client(){
-
-	}
-
 	public static void main(String[]args) throws Exception{
 		try (Socket socket = new Socket("18.221.102.182", 38102)) {
 			System.out.println("Connected to server.");
@@ -19,15 +15,20 @@ public class Ex2Client {
 			CRC32 crc = new CRC32();
 			
 			System.out.println("Received bytes: ");
-			
+			System.out.print("  ");
 			for(int i = 0; i < 100; i++){
 				a = is.read()*16;
 				a += is.read();
 				g = a.byteValue();
+				if(i%10==0&&i!=0){
+					System.out.println();
+					System.out.print("  ");
+				}
+				System.out.print(String.format("%02x", g).toUpperCase());
 				crc.update(g);
-			}
-
-			System.out.println("Generated CRC32: " +crc.getValue());
+			}			
+			System.out.println();
+			System.out.println("Generated CRC32: " +String.format("%02x", crc.getValue()).toUpperCase());
 
 			OutputStream os = socket.getOutputStream();
 			
@@ -37,7 +38,6 @@ public class Ex2Client {
 			for(int i = 3; i >= 0; i--){
 				stuff[i] = (byte) ((value)&0xFF);
 				value = (Long)(value/0x100);
-				System.out.println(stuff[i]);
 			}
 			
 			os.write(stuff);
